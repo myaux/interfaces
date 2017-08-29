@@ -60,9 +60,43 @@ if ($action == 'register') {
     $sql = "select * from users where user_name='$user_name' and password='$password'";
     $land = $db->query($sql);
     $info = $land->fetch(PDO::FETCH_ASSOC);
-    echo !$info?"登陆成功":"登陆失败";
-}
+    return json(['password' => $password, 'user_name' => $user_name], '登陆成功');
+}else {
+        // 密码错误
+         return json([], '用户名或密码错误', -1);
+    }
+elseif($action == 'get_self_info') {
 
 //获取自己信息
-$sql = "select * from users where user_name='$user_name' and password='$password'";
-var_dump($sql);
+if (empty($uid) || empty($token)) return json([], '未登录', -1);
+    // 验证token是否正确
+    $result = $db->query("select * from `users` where `id` = $uid and `token` = '$token'");
+    if ($result) {
+        $user = $result->fetch($db::FETCH_ASSOC);
+
+        // 查询不到
+        if (empty($result)) return json([], '未登录', -1);
+
+        // 查询到了
+        unset($user['password'], $user['token']);
+        return json(['item' => $user]);
+    } else {
+           return json([$db->errorInfo()], '数据库错误', -1);
+    }
+
+    elseif($action == 'get_user_info') {
+    // 根据user_id 获取用户信息
+    $user_id = empty($_POST['user_id'])?null:trim($_POST['user_id']);
+    if (empty($user_id)) return json([], 'user_id必须传入', -1);
+    if (!is_numeric($user_id)) return json([], 'user_id必须为参数', -1);
+
+// 执行查询
+$result = $db->query("select `id`, `user_name`, `reg_time` from `users` where `id` = $user_id");
+if ($result) {
+          $user = $result->fetch($db::FETCH_ASSOC);
+         return json(['item' => $user]);
+   } else {
+           return json([$db->errorInfo()], '数据库错误', -1);
+   }
+ } else {
+      return json([$_SERVER], '无效的接口', -1);
