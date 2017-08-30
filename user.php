@@ -33,7 +33,8 @@ function json ($data = [], $msg = 'success', $code = 0, $exit = true) {
 
 $user_name = $_POST('user_name');
 $password = $_POST('password');
-
+$user_nameLen = strlen($user_name);
+$passwordLen = strlen($password);
 // 执行操作
 if ($action == 'register') {
     // 注册操作
@@ -43,8 +44,7 @@ if ($action == 'register') {
     $user_name = empty($_POST['user_name']) ? null : trim($_POST['user_name']);
     $password = empty($_POST['password']) ? null : trim($_POST['password']);
 
-    $user_nameLen = strlen($user_name);
-    $passwordLen = strlen($password);
+
     if ($user_nameLen = 0) {
         exit('用户名不能为空');
     } elseif ($passwordLen = 0) {
@@ -68,10 +68,31 @@ if ($action == 'register') {
         return json([$db->errorInfo()], '注册失败', -1);
     }
 }
-登陆 login
-注册 register
-获取自己信息 get_self_info
-获取用户信息 get_user_info
+if ($action = 'login'){
+    $user_name = empty($_POST['user_name']) ? null : trim($_POST['user_name']);
+    $password = empty($_POST['password']) ? null : trim($_POST['password']);
+
+    if ($user_nameLen = 0) {
+        exit('用户名不能为空');
+    } elseif ($passwordLen = 0) {
+        exit('密码不能为空');
+    }
+
+    $result = $db->query("select * from `users` where user_name='$user_name'");
+    $user = $result->fetchObject();
+    if (empty($user)) return json([],'用户名不存在');
+    $hash_password = $user->password;
+    $user_id = $user->id;
+
+    $result = $db->query("select * from `users` where user_name ='$user_name' and password = '$password'");
+    $log = $result->fetchObject();
+    if (empty($log)) return json([],'密码错误');
+
+}
+//登陆 login
+//注册 register
+//获取自己信息 get_self_info
+//获取用户信息 get_user_info
 
 
 
