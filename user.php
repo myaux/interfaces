@@ -56,7 +56,7 @@ if ($action == 'register') {
     };
 
     //验证用户名是否已存在
-    $result = $db->query("select user_name from `users` where user_name='$username'");
+    $result = $db->query("select user_name from `users` where user_name='$user_name'");
     if ($result->fetchObject()) return json([], '用户名已被使用', -1);
 
     $hash_password = password_hash($password, PASSWORD_DEFAULT);
