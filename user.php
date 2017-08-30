@@ -68,7 +68,10 @@ if ($action == 'register') {
         return json([$db->errorInfo()], '注册失败', -1);
     }
 }
-
+登陆 login
+注册 register
+获取自己信息 get_self_info
+获取用户信息 get_user_info
 
 
 
