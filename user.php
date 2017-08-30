@@ -87,7 +87,7 @@ if ($action = 'login'){
     $result = $db->query("select * from `users` where user_name ='$user_name' and password = '$password'");
     $log = $result->fetchObject();
     if (empty($log)) return json([],'密码错误');
-
+    return json(['user_name = $user_name','password = $password'],'登陆成功');
 }
 //登陆 login
 //注册 register
